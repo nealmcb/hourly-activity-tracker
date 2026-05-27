@@ -22,7 +22,7 @@ data class HourlySteps(
     val steps: Long
 )
 
-class HealthConnectManager(application: Application) {
+class HealthConnectManager(private val application: Application) {
 
     private val healthConnectClient by lazy { HealthConnectClient.getOrCreate(application) }
 
