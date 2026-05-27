@@ -1,7 +1,6 @@
 package net.nealmcb.hourlyactivitytracker
 
 import android.app.Application
-import androidx.health.connect.client.HealthConnectClient
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,8 +31,7 @@ class HourlyActivityViewModel(application: Application) : AndroidViewModel(appli
 
     fun checkAvailabilityAndLoad() {
         viewModelScope.launch {
-            val availability = HealthConnectClient.getSdkStatus(getApplication())
-            if (availability != HealthConnectClient.SDK_AVAILABLE) {
+            if (!healthConnectManager.isAvailable()) {
                 _uiState.value = UiState.HealthConnectUnavailable
                 return@launch
             }

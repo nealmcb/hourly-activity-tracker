@@ -37,7 +37,12 @@
 
     <!-- Required query for Health Connect SDK availability -->
     <queries>
+        <!-- Phone / tablet: standalone Health Connect APK -->
         <package android:name="com.google.android.apps.healthdata" />
+        <!-- Wear OS: platform-integrated Health Connect settings activity -->
+        <intent>
+            <action android:name="androidx.health.ACTION_HEALTH_CONNECT_SETTINGS" />
+        </intent>
     </queries>
 
 </manifest>

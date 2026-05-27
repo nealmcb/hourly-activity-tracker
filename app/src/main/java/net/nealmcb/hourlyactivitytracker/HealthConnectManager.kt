@@ -12,6 +12,9 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 
+// Feature name for Wear OS hardware detection
+private const val FEATURE_WATCH = "android.hardware.type.watch"
+
 private const val TAG = "HealthConnectManager"
 
 data class HourlySteps(
@@ -27,6 +30,35 @@ class HealthConnectManager(application: Application) {
         val PERMISSIONS = setOf(
             HealthPermission.getReadPermission(StepsRecord::class)
         )
+    }
+
+    /**
+     * Returns true if Health Connect is available on this device.
+     *
+     * `HealthConnectClient.getSdkStatus()` in connect-client 1.1.0-rc01 has a known issue where
+     * it may return SDK_UNAVAILABLE on Wear OS even though Health Connect is integrated into the
+     * platform (Wear OS 4 / API 33+).  As a workaround, when getSdkStatus() reports unavailable
+     * on a watch, we attempt to create the client directly — if that succeeds, HC is available.
+     */
+    fun isAvailable(): Boolean {
+        val status = HealthConnectClient.getSdkStatus(application)
+        if (status == HealthConnectClient.SDK_AVAILABLE) return true
+
+        // On Wear OS, Health Connect is a platform component (Wear OS 4 / API 33+).
+        // If getSdkStatus() missed it, try getOrCreate() as a fallback.
+        val isWatch = application.packageManager.hasSystemFeature(FEATURE_WATCH)
+        Log.d(TAG, "getSdkStatus=$status  isWatch=$isWatch")
+        if (isWatch) {
+            return try {
+                HealthConnectClient.getOrCreate(application)
+                Log.d(TAG, "Health Connect available via direct client creation on Wear OS")
+                true
+            } catch (e: UnsupportedOperationException) {
+                Log.w(TAG, "Health Connect not available on this Wear OS device", e)
+                false
+            }
+        }
+        return false
     }
 
     suspend fun hasAllPermissions(): Boolean {
