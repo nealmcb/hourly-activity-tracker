@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Hourly Activity</string>
+    <string name="permission_required">Health Connect permission required to read step data.</string>
+    <string name="grant_access">Grant Access</string>
+    <string name="retry">Retry</string>
+    <string name="health_connect_unavailable">Health Connect is not available on this device.</string>
+</resources>
