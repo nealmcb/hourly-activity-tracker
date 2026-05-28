@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
                     onRequestPermissions = {
                         permissionLauncher.launch(HealthConnectManager.PERMISSIONS)
                     },
-                    onRefresh = { viewModel.loadTodaySteps() }
+                    onRefresh = { viewModel.checkAvailabilityAndLoad() }
                 )
             }
         }

@@ -50,7 +50,7 @@ fun HourlyActivityApp(
         when (uiState) {
             is UiState.Loading -> LoadingScreen()
             is UiState.PermissionRequired -> PermissionScreen(onRequestPermissions)
-            is UiState.HealthConnectUnavailable -> UnavailableScreen()
+            is UiState.HealthConnectUnavailable -> UnavailableScreen(reason = uiState.reason, onRetry = onRefresh)
             is UiState.Success -> HourlyGridScreen(
                 date = uiState.date,
                 hourlySteps = uiState.hourlySteps,
@@ -93,17 +93,23 @@ private fun PermissionScreen(onRequestPermissions: () -> Unit) {
 }
 
 @Composable
-private fun UnavailableScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+private fun UnavailableScreen(reason: String, onRetry: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Health Connect not available",
+            text = reason,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(bottom = 12.dp),
             style = MaterialTheme.typography.body2
         )
+        Button(onClick = onRetry) {
+            Text("Retry")
+        }
     }
 }
 
